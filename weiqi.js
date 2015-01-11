@@ -10,7 +10,9 @@ var Weiqi = function(n,svg,size){
 			for (var j = 0; j<boardSize; j++){
 				var row = String.fromCharCode(65+i);
 				var col = j;
-				board[row+col] = 0;
+				board[row+col] = {
+					color: 'rgb(94, 56, 24)'
+				}
 			}
 		}
 		return board;
@@ -21,30 +23,65 @@ var Weiqi = function(n,svg,size){
 	weiqi.getStones = function(){
 		var colors = ['','black','white']
 		var stones = [];
-		for(var stone in this.board){
-			var row = stone.charCodeAt(0)-65;
-			var col = +stone.slice(1);
-			var stone = this.board[stone];
-			stones.push({cx: step*row+init, cy: step*col+init, stone: colors[stone], coor: stone})
+		for(var key in this.board){
+			var row = key.charCodeAt(0)-65;
+			var col = +key.slice(1);
+			var stone = this.board[key];
+			stones.push({cx: step*row+init, cy: step*col+init, stone: stone.color, coor: key})
 		}
 		return stones;
+	}
+
+	weiqi.getGrid = function(){
+		var results = [];
+		var start = 0*step+init;
+		var end = (n-1)*step+init;
+		for(var i = 0; i < n; i++){
+			var vertData = {
+				x1: i*step+init,
+				y1: start,
+				x2: i*step+init,
+				y2: end
+			};
+			var horiData = {
+				y1: i*step+init,
+				x1: start,
+				y2: i*step+init,
+				x2: end
+			};
+			results.push(vertData);
+			results.push(horiData);
+		}
+		return results;
 	}
 
 	return weiqi;
 }
 
-var boardWidth = 500;
-var boardSize = 19;
-var stoneRadius = ((boardWidth/boardSize)/2)-1;
+
+
+var boardWidth = $(document).height()*0.9 > $(document).width()*0.9 ? $(document).width()*0.9 : $(document).height()*0.9;
+var boardSize = 10;
+var stoneRadius = ((boardWidth/boardSize)/2)-2;
 
 var svg = d3.select('body').append('svg')
 						.attr('width',boardWidth)
 						.attr('height',boardWidth);
 
+var weiqi = Weiqi(boardSize,svg,boardWidth);
 
-var weiqi = Weiqi(19,svg,500);
+var drawBoard = function(svg){
+	svg.selectAll('line').data(weiqi.getGrid())
+			.enter().append('line')
+			.attr('x1', function(d){return d.x1})
+			.attr('x2', function(d){return d.x2})
+			.attr('y1', function(d){return d.y1})
+			.attr('y2', function(d){return d.y2})
+			.attr('stroke-width', stoneRadius/10)
+			.attr('stroke','black')
+}
 
-var render = function(){
+var render = function(svg){
 	svg.selectAll('circle').data(weiqi.getStones())
 			.enter().append('circle')
 			.attr('cx',function(d){return d.cx})
@@ -52,8 +89,9 @@ var render = function(){
 			.attr('r',stoneRadius)
 			.attr('fill',function(d){return d.stone})
 			.on('mouseenter',function(d){$(this).attr('fill','black')})
-			.on('mouseleave', function(d){$(this).attr('fill','rgb(255,230,176)')})
-			.on('click',function(d){d.stone = 'black'; console.log(weiqi.getStones())})
+			.on('mouseleave', function(d){$(this).attr('fill','rgb(94, 56, 24)')})
+			.on('click',function(d){console.log(d)})
+	drawBoard(svg);
 }
 
-render();
+render(svg);
