@@ -1,0 +1,22 @@
+{
+  "name": "WeiqiJS",
+  "version": "0.0.0",
+  "authors": [
+    "chikeichan"
+  ],
+  "description": "Go the Board Game",
+  "main": "weiqi.js",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "~2.1.3",
+    "underscore": "~1.7.0",
+    "d3": "~3.5.3"
+  }
+}
