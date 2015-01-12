@@ -63,10 +63,10 @@ var Weiqi = function(n,size){
 			history.push(JSON.stringify(this.board));
 			this.board[coor].color = this.currentPlay;
 			this.evaluateEdge(coor,this.currentPlay);
-			if(!this.legal(coor)){
-				this.removeStone(coor);
-				return;
-			}
+			// if(!this.legal(coor)){
+			// 	this.removeStone(coor);
+			// 	return;
+			// }
 			this.findKills(coor);
 			if(!this.findLife(coor)){
 				this.removeStone(coor);
@@ -96,19 +96,6 @@ var Weiqi = function(n,size){
 		}
 	}
 
-
-	//if move is legal
-	weiqi.legal = function(coor){
-		var otherColor = this.currentPlay === 'black' ? 'white' : 'black';
-		var lastKilled = this.lastKills[otherColor];
-		if(!!lastKilled){	
-			if(lastKilled.length ===1 && lastKilled[0] === coor){
-				return false;
-			}
-		}
-		return true;
-	}
-
 	//Set edge to true if connected to same stones
 	weiqi.evaluateEdge = function(coor,stone){
 		for(var edge in this.board[coor].edges) {
@@ -126,9 +113,11 @@ var Weiqi = function(n,size){
 
 	//Find kills
 	weiqi.findKills = function(coor){
+		var otherColor = this.currentPlay === 'black' ? 'white' : 'black';
+		var prevKilled = this.lastKills[otherColor];
+		var undo = false;
 		var killed = false;
 		for(var edge in this.board[coor].edges){
-			console.log(this.board[edge].color);
 			if(this.board[edge].color !== this.board[coor].color && !!this.board[edge].color){
 				if(!this.findLife(edge)){
 					var kills = [];
@@ -136,6 +125,13 @@ var Weiqi = function(n,size){
 						kills.push(stone);
 						this.removeStone(stone);
 					}
+					if(prevKilled!==undefined){
+						console.log(prevKilled)
+						if(kills.length === 1 && prevKilled[0] === coor){
+							undo = true;
+						}
+					}
+
 					this.lastKills[this.board[coor].color] = kills;
 					killed = true;
 				}
@@ -143,6 +139,9 @@ var Weiqi = function(n,size){
 		}
 		if(!killed){
 			this.lastKills[this.board[coor].color] = undefined;
+		}
+		if(undo){
+			this.undo();
 		}
 	}
 
