@@ -81,7 +81,7 @@ var Weiqi = function(n,size){
 	weiqi.removeStone = function(coor){
 		this.board[coor].color = null;
 		for(var edge in this.board[coor].edges){
-			this.board[coor].edges[edge] = this.board[edge].color;
+			this.board[coor].edges[edge].color = this.board[edge].color;
 			this.board[edge].edges[coor] = 'open';
 		}
 	}
@@ -128,6 +128,7 @@ var Weiqi = function(n,size){
 	weiqi.findKills = function(coor){
 		var killed = false;
 		for(var edge in this.board[coor].edges){
+			console.log(this.board[edge].color);
 			if(this.board[edge].color !== this.board[coor].color && !!this.board[edge].color){
 				if(!this.findLife(edge)){
 					var kills = [];

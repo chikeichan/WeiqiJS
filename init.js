@@ -26,7 +26,6 @@ $(document).ready(function(){
 		}
 		if(e.keyCode === 90){
 			weiqi.undo();
-			weiqi.currentPlay = weiqi.currentPlay === 'black' ? 'white' : 'black';
 			render(svg,weiqi);
 		}
 	})	
