@@ -1,25 +1,62 @@
+
+//board metrics
 var boardWidth = $(document).height()*0.9 > $(document).width()*0.9 ? $(document).width()*0.9 : $(document).height()*0.9;
-var boardSize = 6;
+var boardSize = 19;
 var stoneRadius = ((boardWidth/boardSize)/2)-2;
 
+//Create SVG
 var svg = d3.select('body').append('svg')
 						.attr('width',boardWidth)
 						.attr('height',boardWidth);
 
-var weiqi = Weiqi(boardSize,boardWidth);
+//Instantiate game
+var weiqi;
+$(document).ready(function(){
+	$('.init').width(boardWidth+1);
+	$('.init').height(boardWidth+1);
 
-var drawBoard = function(svg, game){
+	
+	$('body').on('keydown',function(e){
+		console.log(e.keyCode)
+		if(e.keyCode === 66){
+			weiqi.currentPlay = 'black';
+		}
+		if(e.keyCode === 87){
+			weiqi.currentPlay = 'white';
+		}
+		if(e.keyCode === 90){
+			weiqi.undo();
+			weiqi.currentPlay = weiqi.currentPlay === 'black' ? 'white' : 'black';
+			render(svg,weiqi);
+		}
+	})	
+
+	$('#board-size').on('keydown',function(e){
+		if(e.keyCode === 13){
+			boardSize = $(this).val();
+			weiqi = Weiqi(boardSize,boardWidth);
+			stoneRadius = ((boardWidth/boardSize)/2)-2;
+			render(svg, weiqi);
+			$('.init').remove();
+		}
+	})
+})
+
+//UTITLIES FUNCTIONS =================================================
+//function to draw board
+function drawBoard(svg, game){
 	svg.selectAll('line').data(game.getGrid())
 		.enter().append('line')
 		.attr('x1', function(d){return d.x1})
 		.attr('x2', function(d){return d.x2})
 		.attr('y1', function(d){return d.y1})
 		.attr('y2', function(d){return d.y2})
-		.attr('stroke-width', stoneRadius/10)
-		.attr('stroke','grey')
+		.attr('stroke-width', stoneRadius/15)
+		.attr('stroke','black')
 }
 
-var render = function(svg,game){
+//Rendering Function
+function render(svg,game){
 	var grids = svg.selectAll('circle').data(game.getStones());
 	//Draw grid
 	drawBoard(svg,game);
@@ -35,23 +72,25 @@ var render = function(svg,game){
 			if(!d.stone){
 				$(this).attr('opacity',0);
 			} else {
-				$(this).attr('opacity',100);
+				$(this).attr('opacity',1);
 			}
 			return d.stone;
 		})
 		.on('mouseenter',function(d){
-			$(this).attr({
-				fill: game.currentPlay,
-				opacity: 100
+			if(!d.stone){	
+				$(this).attr({
+					fill: game.currentPlay,
+					opacity: 0.5
 			});
+			}
 		})
 		.on('mouseleave', function(d){
 			render(svg,game);
 		})
 		.on('click',function(d){
-			game.putStone(d.coor);
-			render(svg,game);
+			if(!d.stone){	
+				game.putStone(d.coor);
+				render(svg,game);
+			}
 		})
 }
-
-render(svg, weiqi);
