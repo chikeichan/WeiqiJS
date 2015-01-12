@@ -1,4 +1,5 @@
 svg {
 	border: 1px solid black;
-	background-color: rgb(94, 56, 24);;
+	background-color: rgb(94, 56, 24);
+	cursor: none;
 }
