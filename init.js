@@ -17,7 +17,7 @@ $(document).ready(function(){
 
 	
 	$('body').on('keydown',function(e){
-		console.log(e.keyCode)
+		// console.log(e.keyCode)
 		if(e.keyCode === 66){
 			weiqi.currentPlay = 'black';
 		}
@@ -90,6 +90,7 @@ function render(svg,game){
 			if(!d.stone){	
 				game.putStone(d.coor);
 				render(svg,game);
+				ai.play(svg,game);
 			}
 		})
 }

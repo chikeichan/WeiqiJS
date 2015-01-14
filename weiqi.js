@@ -1,6 +1,5 @@
 var Weiqi = function(n,size){
 	var weiqi = {};
-
 	//Basic Metrics
 	var step = size/n;
 	var init = (size/n)/2;
@@ -18,9 +17,6 @@ var Weiqi = function(n,size){
 		white: undefined,
 		black: undefined
 	}
-
-
-
 
 	//Return array of stones info for D3
 	weiqi.getStones = function(){
@@ -60,21 +56,16 @@ var Weiqi = function(n,size){
 
 	//Put Stone on board
 	weiqi.putStone = function(coor){
-			history.push(JSON.stringify(this.board));
-			this.board[coor].color = this.currentPlay;
-			this.evaluateEdge(coor,this.currentPlay);
-			// if(!this.legal(coor)){
-			// 	this.removeStone(coor);
-			// 	return;
-			// }
-			this.findKills(coor);
-			if(!this.findLife(coor)){
-				this.removeStone(coor);
-				return;
-			}
-			this.currentPlay = this.currentPlay === 'black' ? 'white' : 'black';
-			this.lastPlay[this.board[coor].color] = coor;
-			forward = [];
+		history.push(JSON.stringify(this.board));
+		this.board[coor].color = this.currentPlay;
+		this.evaluateEdge(coor,this.currentPlay);
+		this.findKills(coor);
+		if(!this.findLife(coor)){
+			this.removeStone(coor);
+			return;
+		}
+		this.currentPlay = this.currentPlay === 'black' ? 'white' : 'black';
+		this.lastPlay[this.board[coor].color] = coor;
 	}
 
 	//Remoev Stone on board
@@ -91,7 +82,6 @@ var Weiqi = function(n,size){
 		if(history.length > 0){
 			var move = history.pop();
 			this.board = JSON.parse(move);
-			console.log(this.currentPlay)
 			this.currentPlay = this.currentPlay === 'black' ? 'black' : 'white';
 		}
 	}
@@ -113,6 +103,7 @@ var Weiqi = function(n,size){
 
 	//Find kills
 	weiqi.findKills = function(coor){
+		//Previous Kills of opponents
 		var otherColor = this.currentPlay === 'black' ? 'white' : 'black';
 		var prevKilled = this.lastKills[otherColor];
 		var undo = false;
@@ -126,12 +117,10 @@ var Weiqi = function(n,size){
 						this.removeStone(stone);
 					}
 					if(prevKilled!==undefined){
-						console.log(prevKilled)
 						if(kills.length === 1 && prevKilled[0] === coor){
 							undo = true;
 						}
 					}
-
 					this.lastKills[this.board[coor].color] = kills;
 					killed = true;
 				}
