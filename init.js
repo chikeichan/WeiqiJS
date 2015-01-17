@@ -90,7 +90,26 @@ function render(svg,game){
 			if(!d.stone){	
 				game.putStone(d.coor);
 				render(svg,game);
-				ai.play(svg,game);
+				ai.play(svg,game,d);
 			}
 		})
+
+		//Uncomment for Dev Mode
+		renderValues(svg,game);
+}
+
+function renderValues(svg,game){
+	var dev = svg.selectAll('text').data(game.getStones());
+
+	//Initialize board
+	dev.enter().append('text')
+
+	//Updates attributes
+	dev.attr('x',function(d){return d.cx})
+		.attr('y',function(d){return d.cy})
+		.attr('r',stoneRadius)
+		.attr('fill','red')
+		.attr('font-size',stoneRadius)
+		.text(function(d){if(d.value!==0){return d.value}})
+
 }

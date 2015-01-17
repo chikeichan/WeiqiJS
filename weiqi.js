@@ -25,7 +25,7 @@ var Weiqi = function(n,size){
 			var row = key.charCodeAt(0)-65;
 			var col = +key.slice(1);
 			var stone = this.board[key];
-			stones.push({cx: step*row+init, cy: step*col+init, stone: stone.color, coor: key})
+			stones.push({cx: step*row+init, cy: step*col+init, stone: stone.color, coor: key, value: stone.value})
 		}
 		return stones;
 	}
