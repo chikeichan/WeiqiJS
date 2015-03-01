@@ -90,7 +90,7 @@ function render(svg,game){
 			if(!d.stone){	
 				game.putStone(d.coor);
 				render(svg,game);
-				ai.play(svg,game,d);
+				//ai.play(svg,game,d);
 			}
 		})
 
