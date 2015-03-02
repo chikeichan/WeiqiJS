@@ -39,6 +39,14 @@ $(document).ready(function(){
 			$('.init').remove();
 		}
 	})
+
+	$('#init').on('click',function(e){
+		boardSize = $('#board-size').val();
+		weiqi = Weiqi(boardSize,boardWidth);
+		stoneRadius = ((boardWidth/boardSize)/2)-2;
+		render(svg, weiqi);
+		$('.init').remove();
+	})
 })
 
 //UTITLIES FUNCTIONS =================================================
