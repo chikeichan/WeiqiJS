@@ -216,6 +216,3 @@ var Weiqi = function(n,size){
 		return edge;
 	}
 }
-
-
-

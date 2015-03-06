@@ -2,23 +2,31 @@
 <html>
 	<head>
 		<link rel='stylesheet' type='text/css' href="./style/style.css">
-		<!-- Dependency -->
-    <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.7.0/underscore-min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/3.5.3/d3.min.js"></script>
-    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
-
 	</head>
 	<body>
 		<div class='init'>
 			<div>
-				<h1>How big is your game?</br></h1>
+				<h1>How big is your game?<br></h1>
 				<input id='board-size' type='number' value='19'></input>
 				<button id='init'>Go!</button>
-			<div>
+			</div>
 		</div>
-		<div></div>
+		<div>
+			<div class='player-box-1'>
+				<p id='player-id-black'></p>
+				<button id='player-join-black'>Black</button>
+			</div>
+			<div class='player-box-2'>
+				<p id='player-id-white'></p>
+				<button id='player-join-white'>White</button>
+			</div>
+		</div>
 	</body>
-		<script src="./game/ai.js"></script>
-		<script src="./game/weiqi.js"></script>
-		<script src="./game/init.js"></script>
+		<script type="text/javascript" src='/socket.io/socket.io.js'></script>
+		<script type="text/javascript" src='./lib/d3/d3.min.js'></script>
+		<script type="text/javascript" src='./lib/jquery/dist/jquery.min.js'></script>
+		<script type="text/javascript" src="./game/weiqi.js"></script>
+		<script type="text/javascript" src="./game/multiplayer.js"></script>
+		<script type="text/javascript" src="./game/player.js"></script>
+		<script type="text/javascript" src="./game/init.js"></script>
 </html>

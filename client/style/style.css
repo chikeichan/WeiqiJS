@@ -24,3 +24,7 @@ svg {
 .init > div {
 	padding: 100px;
 }
+
+.player-box-1, .player-box-2 {
+  float: right;
+}
