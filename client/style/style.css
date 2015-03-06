@@ -1,5 +1,5 @@
 body {
-	background-color: rgb(39, 39, 39);
+	background-color: gray;
 	text-align: center;
 }
 
@@ -27,4 +27,12 @@ svg {
 
 .player-box-1, .player-box-2 {
   float: right;
+}
+
+#player-id-black {
+  color: black;
+}
+
+#player-id-white {
+  color: white;
 }

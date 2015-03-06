@@ -1,18 +1,18 @@
-function Multiplayer(weiqi, onInit, onLeave){
+function Multiplayer(attr){
   var socket = io();
 
   socket.emit('init', 'connected');
 
   socket.on('players',function(players){
-    onInit(players);
+    attr.onInit(players);
   });
 
-  socket.on('oppoMove',function(move){
-    weiqi.putStone(move.coor);
+  socket.on('oppoMove',function(newState){
+    attr.onMove(newState);
   })
 
   socket.on('leave',function(id){
-    onLeave(id);
+    attr.onLeave(id);
   })
 
   return socket;

@@ -22,8 +22,38 @@ render(svg, weiqi);
 $('.init').remove();
 
 //Sockets
-var socket = Multiplayer(weiqi, function(existingPlayers){
-	players = existingPlayers;
+var socket = Multiplayer({
+	model: weiqi,
+	onInit: function(existingPlayers){
+		players = existingPlayers;
+		renderUI(players);
+	},
+	onLeave: function(id){
+		for(var key in players){
+			if(players[key] === id){
+				delete players[key];
+			}
+		}	
+		renderUI(players);
+	},
+	onMove: function(newState){
+		if(newState.board){		
+			weiqi.board = newState.board;
+			weiqi.currentPlay = newState.currentPlay;
+			weiqi.lastKills = newState.lastKills;
+			weiqi.lastPlay = newState.lastPlay;
+		}
+		render(svg, weiqi);		
+	}
+});
+
+//Render Interface
+function renderUI(players){
+	$('#player-join-white').show();
+	$('#player-join-black').show();
+	$('#player-id-white').text('');
+	$('#player-id-black').text('');
+
 	for(var key in players){
 		if(key === 'white'){
 			$('#player-join-white').hide();
@@ -34,17 +64,12 @@ var socket = Multiplayer(weiqi, function(existingPlayers){
 			$('#player-id-black').text(players[key])
 		}
 	}
-}, function(id){
-	console.log(id,players);
-	for(var key in players){
-		if(players[key] === id){
-			delete players[key];
-			var dom = '#player-join-'+key;
-			$(dom).show();
-		}
-	}	
-});
 
+	if(player){
+		$('#player-join-white').hide();
+		$('#player-join-black').hide();		
+	}
+};
 
 
 
@@ -54,19 +79,19 @@ $(document).ready(function(){
 	// $('.init').width(boardWidth+1);
 	// $('.init').height(boardWidth+1);
 
-	// $('body').on('keydown',function(e){
-	// 	// console.log(e.keyCode)
-	// 	if(e.keyCode === 66){
-	// 		weiqi.currentPlay = 'black';
-	// 	}
-	// 	if(e.keyCode === 87){
-	// 		weiqi.currentPlay = 'white';
-	// 	}
-	// 	if(e.keyCode === 90){
-	// 		weiqi.undo();
-	// 		render(svg,weiqi);
-	// 	}
-	// });
+	$('body').on('keydown',function(e){
+		// console.log(e.keyCode)
+		if(e.keyCode === 66){
+			weiqi.currentPlay = 'black';
+		}
+		if(e.keyCode === 87){
+			weiqi.currentPlay = 'white';
+		}
+		if(e.keyCode === 90){
+			weiqi.undo();
+			render(svg,weiqi);
+		}
+	});
 
 	// $('#board-size').on('keydown',function(e){
 	// 	if(e.keyCode === 13){
@@ -88,26 +113,13 @@ $(document).ready(function(){
 	// });
 
 	$('#player-join-white').on('click',function(){
-		player = Player({
-			color: 'white'
-		});
-
+		player = Player({color: 'white'});
 		socket.emit('join',player)
-
-		$(this).hide();
-		$('#player-join-black').hide();
-
 	});
 
 	$('#player-join-black').on('click',function(){
-		player = Player({
-			color: 'black'
-		});
-
+		player = Player({color: 'black'});
 		socket.emit('join',player)
-
-		$(this).hide();
-		$('#player-join-white').hide();
 	})
 
 })
@@ -158,14 +170,16 @@ function render(svg,game){
 			render(svg,game);
 		})
 		.on('click',function(d){
-			if(!d.stone && player.color === weiqi.currentPlay){	
+			if(!d.stone && player.color === game.currentPlay){	
 				game.putStone(d.coor);
-				socket.emit('move',{coor: d.coor, color: player.color})
+				socket.emit('move',game);
 				render(svg,game);
 			}
 		})
 
-		renderValues(svg,game);
+	$('#current-turn').text(weiqi.currentPlay);
+
+	renderValues(svg,game);
 }
 
 function renderValues(svg,game){
