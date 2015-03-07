@@ -2,35 +2,46 @@
 <html>
 	<head>
 		<link rel='stylesheet' type='text/css' href="./style/style.css">
-	</head>
+		<link href='//fonts.googleapis.com/css?family=Bowlby+One+SC' rel='stylesheet' type='text/css'>	
+  </head>
 	<body>
-		<div class='init'>
-			<div>
-				<h1>How big is your game?<br></h1>
-				<input id='board-size' type='number' value='19'></input>
-				<button id='init'>Go!</button>
-			</div>
+		<div id='front-page'></div>
+		<div id='team'>
+		  <h1>Dev Team</h1>
+		  <div id='team-member'>
+		    <img id='team-pic' src='https://avatars3.githubusercontent.com/u/8507735?v=3&s=460'><div id='team-name'>Jacky Chan</div></img>
+		    <div id='team-links'>
+		      <a href='//www.linkedin.com/in/chikeichan' target="_blank"><img id='team-navicon' src='./images/linkedin.png'></img></a>
+		      <a href='//github.com/chikeichan' target="_blank"><img id='team-navicon' src='./images/github.png'></img></a>
+		      <a href='http://chikei.io' target="_blank"><img id='team-navicon' src='./images/blog.png'></img></a>
+		    </div>
+		  </div>  
+		  <div id='team-member'>
+		    <img id='team-pic' src='https://avatars1.githubusercontent.com/u/7460768?v=3&s=460'><div id='team-name'>Jason Yang</div></img>
+		    <div id='team-links'>
+		      <a href='//www.linkedin.com/in/jasonyangftd/en' target="_blank"><img id='team-navicon' src='./images/linkedin.png'></img></a>
+		      <a href='//github.com/jasonyangftd' target="_blank"><img id='team-navicon' src='./images/github.png'></img></a>
+		      <a href='//jasonyangftd.wordpress.com' target="_blank"><img id='team-navicon' src='./images/blog.png'></img></a>
+		    </div>
+		  </div>  
 		</div>
-		<div>
-			<p id='current-turn'></p>
-			<div class='player-box-1'>
-				<p id='player-id-black'></p>
-				<button id='player-join-black'>Black</button>
-			</div>
-			<div class='player-box-2'>
-				<p id='player-id-white'></p>
-				<button id='player-join-white'>White</button>
-			</div>
-		</div>
+		<div id='join-button'></div>
+		<div id='game-board'></div>
 	</body>
-		<script type="text/javascript" src='/socket.io/socket.io.js'></script>
-		<script type="text/javascript" src='./lib/d3/d3.min.js'></script>
-		<script type="text/javascript" src='./lib/jquery/dist/jquery.min.js'></script>
-		<script type="text/javascript" src='./lib/underscore/underscore-min.js'></script>
-		<script type="text/javascript" src='./lib/backbone/backbone.js'></script>
+	<script type="text/javascript" src='/socket.io/socket.io.js'></script>
+	<script type="text/javascript" src='./lib/d3/d3.min.js'></script>
+	<script type="text/javascript" src='./lib/jquery/dist/jquery.min.js'></script>
+	<script type="text/javascript" src='./lib/underscore/underscore-min.js'></script>
+	<script type="text/javascript" src='./lib/backbone/backbone.js'></script>
 
-		<script type="text/javascript" src="./models/GameModel.js"></script>
-		<script type="text/javascript" src="./views/GameView.js"></script>
-		<script type="text/javascript" src="./game/multiplayer.js"></script>
-		<script type="text/javascript" src="./init.js"></script>
+	<script type="text/javascript" src="./models/GameModel.js"></script>
+	<script type="text/javascript" src="./views/GameView.js"></script>
+	<script type="text/javascript" src="./views/JoinView.js"></script>
+	<script type="text/javascript" src="./views/FrontView.js"></script>
+	<script type="text/javascript" src="./game/multiplayer.js"></script>
+	<script type="text/javascript" src="./init.js"></script>
+
+	<script>
+		var frontView = new FrontView({el: 'div#front-page'});
+	</script>
 </html>
