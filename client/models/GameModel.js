@@ -12,41 +12,64 @@ var GameModel = Backbone.Model.extend({
       white: undefined,
       black: undefined
     });
+    this.set('history', []);
   },
 
   //put stones on the board
   putStone : function(coor){
-    this.board[coor].color = this.currentPlay;
-    this.evaluateEdge(coor,this.currentPlay);
+    var history = this.get('history');
+    history.push(JSON.stringify(this.get('board')));
+    this.set('history', history);
+
+    var board = this.get('board');
+    board[coor].color = this.get('currentPlay');
+    this.set('board', board)
+    // this.get('board')[coor].color = this.get('currentPlay');
+    this.evaluateEdge(coor,this.get('currentPlay'));
     this.findKills(coor);
     if(!this.findLife(coor)){
       this.removeStone(coor);
       return;
     }
-    this.currentPlay = this.currentPlay === 'black' ? 'white' : 'black';
-    this.lastPlay[this.board[coor].color] = coor;
+    var temp = this.get('currentPlay') === 'black' ? 'white' : 'black';
+    this.set('currentPlay', temp);
+
+    var lastPlay = this.get('lastPlay');
+    lastPlay[this.get('board')[coor].color] = coor;
+    this.set('lastPlay', lastPlay);
   },
 
   //Remoev Stone on board
   removeStone : function(coor){
-    this.board[coor].color = null;
-    for(var edge in this.board[coor].edges){
-      this.board[coor].edges[edge].color = this.board[edge].color;
-      this.board[edge].edges[coor] = 'open';
+    var board = this.get('board');
+    board[coor].color = null;
+    for(var edge in board[coor].edges){
+      board[coor].edges[edge].color = board[edge].color;
+      board[edge].edges[coor] = 'open';
+    }
+  },
+
+  undo : function(doNotPush){
+    if(this.get('history').length > 0){
+      var move = this.get('history').pop();
+      this.set('board', JSON.parse(move));
+      var currentPlay = this.get('currentPlay') === 'black' ? 'black' : 'white';
+      this.set('currentPlay', currentPlay);
     }
   },
 
   //Set edge to true if connected to same stones
   evaluateEdge : function(coor,stone){
-    for(var edge in this.board[coor].edges) {
-      if(this.board[edge].color === stone){
-        this.board[coor].edges[edge] = true;
-        this.board[edge].edges[coor] = true;
-      } else if(this.board[edge].color !== stone && !!this.board[edge].color) {
-        this.board[coor].edges[edge] = false;
-        this.board[edge].edges[coor] = false;
+    var board = this.get('board');
+    for(var edge in board[coor].edges) {
+      if(board[edge].color === stone){
+        board[coor].edges[edge] = true;
+        board[edge].edges[coor] = true;
+      } else if(board[edge].color !== stone && !!board[edge].color) {
+        board[coor].edges[edge] = false;
+        board[edge].edges[coor] = false;
       } else {
-        this.board[edge].edges[coor] = this.board[coor].color;
+        board[edge].edges[coor] = board[coor].color;
       }
     }
   },
@@ -54,12 +77,13 @@ var GameModel = Backbone.Model.extend({
   //Find kills
   findKills : function(coor){
     //Previous Kills of opponents
-    var otherColor = this.currentPlay === 'black' ? 'white' : 'black';
-    var prevKilled = this.lastKills[otherColor];
+    var otherColor = this.get('currentPlay') === 'black' ? 'white' : 'black';
+    var prevKilled = this.get('lastKills')[otherColor];
     var undo = false;
     var killed = false;
-    for(var edge in this.board[coor].edges){
-      if(this.board[edge].color !== this.board[coor].color && !!this.board[edge].color){
+    var board = this.get('board');
+    for(var edge in board[coor].edges){
+      if(board[edge].color !== board[coor].color && !!board[edge].color){
         if(!this.findLife(edge)){
           var kills = [];
           for(var stone in this.findGroup(edge)){
@@ -71,13 +95,20 @@ var GameModel = Backbone.Model.extend({
               undo = true;
             }
           }
-          this.lastKills[this.board[coor].color] = kills;
+          var lastKills = this.get('lastKills');
+          // console.log(this)
+          lastKills[board[coor].color] = kills;
+          this.set('lastKills', lastKills);
+
           killed = true;
         }
       }
     }
     if(!killed){
-      this.lastKills[this.board[coor].color] = undefined;
+      var lastKills = this.get('lastKills');
+      lastKills[board[coor].color] = undefined;
+      this.set('lastKills', lastKills);
+      // this.set('lastKills')[board[coor].color] = undefined;
     }
     if(undo){
       this.undo();
@@ -88,7 +119,7 @@ var GameModel = Backbone.Model.extend({
   findGroup : function(coor){
     var result = {}
         result[coor] = true;
-    var board = this.board;
+    var board = this.get('board');
     var path = {};
 
     var recurse = function(coor){
@@ -105,7 +136,7 @@ var GameModel = Backbone.Model.extend({
 
   //Find life for group
   findLife : function(coor){
-    var board = this.board;
+    var board = this.get('board');
     var result = false;
     var path = {}
     var recurse = function(coor){

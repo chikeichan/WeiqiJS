@@ -8,11 +8,11 @@ var GameView = Backbone.View.extend({
   getStones : function(){
     var stones = [];
     var size = $(document).height()*0.9 > $(document).width()*0.9 ? $(document).width()*0.9 : $(document).height()*0.9;
-
-    for(var key in this.model.board){
+    var board = this.model.get('board')
+    for(var key in board){
       var row = key.charCodeAt(0)-65;
       var col = +key.slice(1);
-      var stone = this.model.board[key];
+      var stone = board[key];
       stones.push({cx: size/19*row+size/38, cy: size/19*col+size/38, stone: stone.color, coor: key, value: stone.value})
     }
     return stones;
@@ -46,8 +46,10 @@ var GameView = Backbone.View.extend({
   },
 
   render : function(){
-    this.getStones();
+    // this.getStones();
     var grids = d3.select(this.el).selectAll('circle').data(this.getStones());
+    var gameView = this;
+
     //Draw grid
     this.drawBoard();
 
@@ -67,25 +69,25 @@ var GameView = Backbone.View.extend({
         return d.stone;
       })
       .on('mouseenter',function(d){
-        if(!d.stone){ 
+        if(!d.stone && gameView.model.get('me')){ 
           $(this).attr({
-            fill: this.model.player.color,
+            fill: gameView.model.get('me'),
             opacity: 0.5
         });
         }
       })
       .on('mouseleave', function(d){
-        render();
+        gameView.render();
       })
       .on('click',function(d){
-        if(!d.stone && this.model.player.color === this.model.currentPlay){  
-          this.model.putStone(d.coor);
-          socket.emit('move',game);
-          render();
+        if(!d.stone && gameView.model.get('me') === gameView.model.get('currentPlay')){  
+          gameView.model.putStone(d.coor);
+          // socket.emit('move',game);
+          gameView.render();
         }
       })
 
-    $('#current-turn').text(this.model.currentPlay);
+    $('#current-turn').text(gameView.model.currentPlay);
 
   },
 
