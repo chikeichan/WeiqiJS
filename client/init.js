@@ -59,28 +59,30 @@ $(document).ready(function(){
 	// $('.init').width(boardWidth+1);
 	// $('.init').height(boardWidth+1);
 
-	// $('body').on('keydown',function(e){
-	// 	// console.log(e.keyCode)
-	// 	if(e.keyCode === 66){
-	// 		weiqi.currentPlay = 'black';
-	// 	}
-	// 	if(e.keyCode === 87){
-	// 		weiqi.currentPlay = 'white';
-	// 	}
-	// 	if(e.keyCode === 90){
-	// 		weiqi.undo();
-	// 		render(svg,weiqi);
-	// 	}
-	// });
+	$('body').on('keydown',function(e){
+		// console.log(e.keyCode)
+		if(e.keyCode === 66){
+			game.set('currentPlay', 'black');
+		}
+		if(e.keyCode === 87){
+			game.set('currentPlay', 'white');
+		}
+		if(e.keyCode === 90){
+			game.undo();
+			gameView.render();
+		}
+	});
 
 	$('#player-join-white').on('click',function(){
-		player = Player({color: 'white'});
-		socket.emit('join',player)
+		// player = Player({color: 'white'});
+		game.set('me', 'white');
+		// socket.emit('join',player)
 	});
 
 	$('#player-join-black').on('click',function(){
-		player = Player({color: 'black'});
-		socket.emit('join',player)
+		// player = Player({color: 'black'});
+		game.set('me', 'black')
+		// socket.emit('join',player)
 	})
 
 })
