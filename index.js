@@ -12,7 +12,7 @@ io.on('connection',function(socket){
   })
 
   socket.on('join',function(player){
-    players[player.color] = socket.id;
+    players[player] = socket.id;
     socket.broadcast.emit('players',players);
     socket.emit('players',players);
   })
