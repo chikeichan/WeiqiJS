@@ -9,55 +9,51 @@ var svg = d3.select('body').append('svg')
 						.attr('width',boardWidth)
 						.attr('height',boardWidth);
 
-//Players
-var player;
-// var players = {};
 
 //Initialize Game
 var game = new GameModel();
 var gameView = new GameView({model: game, el: 'svg'});
-// $('.init').width(boardWidth+1);
-// $('.init').height(boardWidth+1);
-// boardSize = $('#board-size').val();
-// weiqi = Weiqi(boardSize,boardWidth);
-// render(svg, weiqi);
+
 $('.init').remove();
 
-//Sockets
-// var socket = Multiplayer({
-// 	model: weiqi,
-// 	onInit: function(existingPlayers){
-// 		players = existingPlayers;
-// 		renderUI(players);
-// 	},
-// 	onLeave: function(id){
-// 		for(var key in players){
-// 			if(players[key] === id){
-// 				delete players[key];
-// 			}
-// 		}	
-// 		renderUI(players);
-// 	},
-// 	onMove: function(newState){
-// 		if(newState.board){		
-// 			weiqi.board = newState.board;
-// 			weiqi.currentPlay = newState.currentPlay;
-// 			weiqi.lastKills = newState.lastKills;
-// 			weiqi.lastPlay = newState.lastPlay;
-// 		}
-// 		render(svg, weiqi);		
-// 	}
-// });
+// Sockets
+var socket = Multiplayer({
+	model: game,
+	onInit: function(existingPlayers){
+		game.set('players', existingPlayers);
+		// console.log(game.get('players'))
+		renderUI(existingPlayers);
+
+	},
+	onLeave: function(id){
+		var players = game.get('players');
+		for(var key in players){
+			if(players[key] === id){
+				delete players[key];
+			}
+		}	
+		game.set('players', players);
+		renderUI(players);
+	},
+	onMove: function(newState){
+		// console.log(newState)
+		if(newState.board){		
+			game.set('board', newState.board);
+			game.set('currentPlay', newState.currentPlay);
+			game.set('lastKills', newState.lastKills);
+			game.set('lastPlay', newState.lastPlay);
+		}
+		gameView.render();		
+	}
+
+});
 
 
 
 
 
 //Instantiate game
-// var weiqi;
 $(document).ready(function(){
-	// $('.init').width(boardWidth+1);
-	// $('.init').height(boardWidth+1);
 
 	$('body').on('keydown',function(e){
 		// console.log(e.keyCode)
@@ -76,15 +72,39 @@ $(document).ready(function(){
 	$('#player-join-white').on('click',function(){
 		// player = Player({color: 'white'});
 		game.set('me', 'white');
-		// socket.emit('join',player)
+		var player = game.get('me');
+		socket.emit('join',player)
 	});
 
 	$('#player-join-black').on('click',function(){
 		// player = Player({color: 'black'});
 		game.set('me', 'black')
-		// socket.emit('join',player)
+		var player = game.get('me');
+		socket.emit('join', player)
 	})
 
 })
 
+//Render Interface
+function renderUI(players){
+	$('#player-join-white').show();
+	$('#player-join-black').show();
+	$('#player-id-white').text('');
+	$('#player-id-black').text('');
 
+	for(var key in players){
+		if(key === 'white'){
+			$('#player-join-white').hide();
+			$('#player-id-white').text(players[key])
+		}
+		if(key === 'black'){
+			$('#player-join-black').hide();		
+			$('#player-id-black').text(players[key])
+		}
+	}
+
+	if(game.get('me')){
+		$('#player-join-white').hide();
+		$('#player-join-black').hide();		
+	}
+};

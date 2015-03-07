@@ -37,6 +37,7 @@ var GameModel = Backbone.Model.extend({
     var lastPlay = this.get('lastPlay');
     lastPlay[this.get('board')[coor].color] = coor;
     this.set('lastPlay', lastPlay);
+    socket.emit('move', this.attributes);
   },
 
   //Remoev Stone on board
