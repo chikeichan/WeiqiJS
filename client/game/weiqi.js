@@ -4,19 +4,19 @@ var Weiqi = function(n,size){
 	var step = size/n;
 	var init = (size/n)/2;
 	var history = [];
-	weiqi.board = createBoard(n);
+	// weiqi.board = createBoard(n);
 
-	//Board Status
-	weiqi.currentPlay = 'black';
-	weiqi.lastPlay = {
-		white: '',
-		black: ''
-	}
+	// //Board Status
+	// weiqi.currentPlay = 'black';
+	// weiqi.lastPlay = {
+	// 	white: '',
+	// 	black: ''
+	// }
 
-	weiqi.lastKills = {
-		white: undefined,
-		black: undefined
-	}
+	// weiqi.lastKills = {
+	// 	white: undefined,
+	// 	black: undefined
+	// }
 
 	//Return array of stones info for D3
 	weiqi.getStones = function(){
