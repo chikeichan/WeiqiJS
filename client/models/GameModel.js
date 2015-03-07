@@ -1,5 +1,5 @@
 var GameModel = Backbone.Model.extend({
-  //initialize the game
+  //Initialize the game
   initialize : function(){
     this.set('players', {})
     this.set('board', createBoard(19));
@@ -14,33 +14,46 @@ var GameModel = Backbone.Model.extend({
     });
     this.set('history', []);
   },
-
+  pushHistory: function(newHistory){
+    var history = this.get('history');
+    history.push(JSON.stringify(newHistory));
+    this.set('history', history);    
+  },
+  //Toggle current turn to black/white
+  toggleCurrentPlay: function(){
+    var temp = this.get('currentPlay') === 'black' ? 'white' : 'black';
+    this.set('currentPlay', temp);
+  },
   //put stones on the board
   putStone : function(coor){
-    var history = this.get('history');
-    history.push(JSON.stringify(this.get('board')));
-    this.set('history', history);
+    //Updat History
+    this.pushHistory(this.get('board'));
 
+    //Update Board
     var board = this.get('board');
     board[coor].color = this.get('currentPlay');
     this.set('board', board)
-    // this.get('board')[coor].color = this.get('currentPlay');
+
+    //Update groups and Find Kills
     this.evaluateEdge(coor,this.get('currentPlay'));
     this.findKills(coor);
     if(!this.findLife(coor)){
       this.removeStone(coor);
       return;
     }
-    var temp = this.get('currentPlay') === 'black' ? 'white' : 'black';
-    this.set('currentPlay', temp);
 
+    //Toggle to next move
+    this.toggleCurrentPlay();
+
+    //Set last play to stone coordinate
     var lastPlay = this.get('lastPlay');
     lastPlay[this.get('board')[coor].color] = coor;
     this.set('lastPlay', lastPlay);
+
+    //Send board state to socket
     socket.emit('move', this.attributes);
   },
-
-  //Remoev Stone on board
+  //Remove Stone on board
   removeStone : function(coor){
     var board = this.get('board');
     board[coor].color = null;
@@ -48,14 +61,17 @@ var GameModel = Backbone.Model.extend({
       board[coor].edges[edge].color = board[edge].color;
       board[edge].edges[coor] = 'open';
     }
+    this.set('board',board);
   },
-
-  undo : function(doNotPush){
+  //Undo a move
+  undo : function(doNotToggle){
     if(this.get('history').length > 0){
       var move = this.get('history').pop();
       this.set('board', JSON.parse(move));
-      var currentPlay = this.get('currentPlay') === 'black' ? 'black' : 'white';
-      this.set('currentPlay', currentPlay);
+
+      if(!doNotToggle){
+        this.toggleCurrentPlay();
+      }
     }
   },
 
@@ -73,6 +89,7 @@ var GameModel = Backbone.Model.extend({
         board[edge].edges[coor] = board[coor].color;
       }
     }
+    this.set('board',board);
   },
 
   //Find kills
@@ -91,13 +108,14 @@ var GameModel = Backbone.Model.extend({
             kills.push(stone);
             this.removeStone(stone);
           }
+          //Check KO Rule
           if(prevKilled!==undefined){
             if(kills.length === 1 && prevKilled[0] === coor){
               undo = true;
             }
           }
+          //Update Kills
           var lastKills = this.get('lastKills');
-          // console.log(this)
           lastKills[board[coor].color] = kills;
           this.set('lastKills', lastKills);
 
@@ -105,21 +123,22 @@ var GameModel = Backbone.Model.extend({
         }
       }
     }
+    //Reset lastKills if no kills found
     if(!killed){
       var lastKills = this.get('lastKills');
       lastKills[board[coor].color] = undefined;
       this.set('lastKills', lastKills);
-      // this.set('lastKills')[board[coor].color] = undefined;
     }
+
+    //Undo kill if KO'd
     if(undo){
-      this.undo();
+      this.undo(true);
     }
   },
-
   //Find Group
   findGroup : function(coor){
     var result = {}
-        result[coor] = true;
+    result[coor] = true;
     var board = this.get('board');
     var path = {};
 
@@ -134,7 +153,6 @@ var GameModel = Backbone.Model.extend({
     recurse(coor);
     return result;
   },
-
   //Find life for group
   findLife : function(coor){
     var board = this.get('board');
@@ -154,8 +172,7 @@ var GameModel = Backbone.Model.extend({
     recurse(coor);
     return result;
   }
-
-})
+});
 
 
 //Utilities funcitons ===================
@@ -172,9 +189,8 @@ function createBoard(boardSize){
       }
     }
   }
-  // history.push(JSON.stringify(board))
   return board;
-}
+};
 
 function createEdge(i,j){
   var up = String.fromCharCode(65+i)+(j-1);
@@ -197,12 +213,4 @@ function createEdge(i,j){
     edge[right] = 'open';
   }
   return edge;
-}
-
-
-
-
-
-
-
-
+};

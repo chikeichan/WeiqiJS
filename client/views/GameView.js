@@ -1,30 +1,31 @@
-var GameView = Backbone.View.extend({
+//board metrics
+var boardWidth = $(document).height()*0.9 > $(document).width()*0.9 ? $(document).width()*0.9 : $(document).height()*0.9;
+var boardSize = 19;
+var stoneRadius = ((boardWidth/boardSize)/2)-2;
+var step = boardWidth/boardSize;
+var init = step/2;
+var end = (boardSize-1)*step+init;
 
-  //initialize
+var GameView = Backbone.View.extend({
   initialize : function(){
-    // this.svg = svg;
+    this.model.on('change',this.render,this);    
     this.render();
   },
+  //Get stones ready for D3
   getStones : function(){
     var stones = [];
-    var size = $(document).height()*0.9 > $(document).width()*0.9 ? $(document).width()*0.9 : $(document).height()*0.9;
     var board = this.model.get('board')
     for(var key in board){
       var row = key.charCodeAt(0)-65;
       var col = +key.slice(1);
       var stone = board[key];
-      stones.push({cx: size/19*row+size/38, cy: size/19*col+size/38, stone: stone.color, coor: key, value: stone.value})
+      stones.push({cx: step*row+init, cy: step*col+init, stone: stone.color, coor: key, value: stone.value})
     }
     return stones;
   },
-
+  //Get grids ready for D3
   getGrid : function(){
     var results = [];
-    var size = $(document).height()*0.9 > $(document).width()*0.9 ? $(document).width()*0.9 : $(document).height()*0.9;
-    var step = size/19
-    var init = size/38
-    // var start = window.innerWidth/38;
-    var end = (19-1)*step+init;
 
     for(var i = 0; i < 19; i++){
       var vertData = {
@@ -46,7 +47,6 @@ var GameView = Backbone.View.extend({
   },
 
   render : function(){
-    // this.getStones();
     var grids = d3.select(this.el).selectAll('circle').data(this.getStones());
     var gameView = this;
 
@@ -82,13 +82,10 @@ var GameView = Backbone.View.extend({
       .on('click',function(d){
         if(!d.stone && gameView.model.get('me') === gameView.model.get('currentPlay')){  
           gameView.model.putStone(d.coor);
-          // socket.emit('move',game);
-          gameView.render();
         }
       })
 
     $('#current-turn').text(gameView.model.currentPlay);
-
   },
 
 //function to draw board
@@ -101,29 +98,5 @@ var GameView = Backbone.View.extend({
       .attr('y2', function(d){return d.y2})
       .attr('stroke-width', stoneRadius/15)
       .attr('stroke','black')
-  },
-
-  //Render Interface
-  renderUI : function(players){
-    $('#player-join-white').show();
-    $('#player-join-black').show();
-    $('#player-id-white').text('');
-    $('#player-id-black').text('');
-
-    for(var key in players){
-      if(key === 'white'){
-        $('#player-join-white').hide();
-        $('#player-id-white').text(players[key])
-      }
-      if(key === 'black'){
-        $('#player-join-black').hide();   
-        $('#player-id-black').text(players[key])
-      }
-    }
-
-    if(this.model.player){
-      $('#player-join-white').hide();
-      $('#player-join-black').hide();   
-    }
   }
 })
