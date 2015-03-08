@@ -1,5 +1,5 @@
 //board metrics
-var boardWidth = $(document).height()*0.9 > $(document).width()*0.9 ? $(document).width()*0.9 : $(document).height()*0.9;
+var boardWidth = window.innerHeight*0.9 > window.innerWidth*0.9 ? window.innerWidth*0.9 : window.innerHeight*0.9;
 var boardSize = 19;
 var stoneRadius = ((boardWidth/boardSize)/2)-2;
 var step = boardWidth/boardSize;

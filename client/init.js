@@ -1,7 +1,6 @@
 var socket;
 var game;
-function startGame(){
-
+function startGame(room){
 	//Create SVG
 	var svg = d3.select('#game-board').append('svg')
 							.attr('width',boardWidth)
@@ -16,6 +15,7 @@ function startGame(){
 	//Configures Sockets
 	socket = Multiplayer({
 		model: game,
+		room: room,
 		onInit: function(existingPlayers){
 			game.set('players', existingPlayers);
 			// renderUI(existingPlayers);
@@ -38,8 +38,10 @@ function startGame(){
 				game.set('lastKills', newState.lastKills);
 				game.set('lastPlay', newState.lastPlay);
 			}
+		},
+		onJoin: function(room){
+			game.set('room',room);
 		}
-
 	});
 
 	//Add key event listeners
@@ -57,4 +59,8 @@ function startGame(){
 			}
 		});
 	});
+
+	window.onbeforeunload = function(){
+		socket.emit('exit',game.attributes);
+	}
 }

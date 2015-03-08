@@ -1,6 +1,6 @@
 var GameModel = Backbone.Model.extend({
   //Initialize the game
-  initialize : function(){
+  initialize : function(room){
     this.set('players', {})
     this.set('board', createBoard(19));
     this.set('currentPlay', 'black');

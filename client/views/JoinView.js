@@ -34,13 +34,13 @@ var JoinView = Backbone.View.extend({
   joinBlack: function(){
     if(!this.model.get('me')){
       this.model.set('me', 'black');
-      socket.emit('join', game.get('me'));
+      socket.emit('join', game.attributes);
     }
   },
   joinWhite: function(){
     if(!this.model.get('me')){
       this.model.set('me', 'white');
-      socket.emit('join',game.get('me'));
+      socket.emit('join',game.attributes);
     }
   }
 });
