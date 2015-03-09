@@ -8,6 +8,18 @@ body {
   background-position: 50% 50%;  margin: 0;
 }
 
+p#title {
+  display: block;
+  width: 50%;
+  font-size: 10vmin;
+  font-family: Permanent Marker;
+  color: white;
+  margin: 0vmin auto -5vmin auto;
+  position: relative;
+  top: 15vh;
+  text-shadow: 0px 0px 1px black;
+}
+
 svg {
 	border: 1px solid black;
 	background-color: rgb(226, 184, 148);

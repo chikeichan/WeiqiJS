@@ -9,6 +9,7 @@ var FrontView = Backbone.View.extend({
   },
   render: function(){
     this.$el.html('<div class="front-page-main"> \
+                     <p id="title">WeiqiJS</p> \
                      <button id="create-game">Create Game</button> \
                      <button id="join-game">Join Game</button> \
                      <input id="room-input" type="text"></input> \
