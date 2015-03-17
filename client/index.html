@@ -8,6 +8,21 @@
 		<div id='front-page'></div>
 		<div id='join-button'></div>
 		<div id='game-board'></div>
+		<div id='instruction-box'>
+			<span id='instruction-toggle'>X</span>
+			<span id='instruction-title'>Create Game</span>
+			<ol>
+				<li>Click create game</li>
+				<li>Get room name from title of page</li>
+				<li>Send room name to friends</li>
+			</ol><span id='instruction-title'>Join Game</span>
+			<ol>
+				<li>Click join game</li>
+				<li>type room name to input box</li>
+				<li>Press enter</li>
+			</ol>
+
+		</div>
 		<div id='team'>
 		  <h1>Dev Team (JJ-Game)</h1>
 		  <div id='team-member'>
@@ -43,5 +58,8 @@
 
 	<script>
 		var frontView = new FrontView({el: 'div#front-page'});
+		$('#instruction-toggle').on('click',function(){
+			$('#instruction-box').toggle();
+		})
 	</script>
 </html>

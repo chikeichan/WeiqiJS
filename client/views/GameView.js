@@ -8,7 +8,10 @@ var end = (boardSize-1)*step+init;
 
 var GameView = Backbone.View.extend({
   initialize : function(){
-    this.model.on('change',this.render,this);    
+    this.model.on('change',this.render,this); 
+    this.model.on('change:room',function(){
+      document.title = this.model.get('room');
+    },this)   
     this.render();
   },
   //Get stones ready for D3

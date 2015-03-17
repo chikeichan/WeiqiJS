@@ -5,14 +5,16 @@ var FrontView = Backbone.View.extend({
   events: {
     'click button#create-game': 'createGame',
     'click button#join-game'  : 'toggleInput',
-    'keydown input'           : 'joinGame'
+    'keydown input'           : 'joinGame',
+    'click button#instruction': 'toggleInstruction'
   },
   render: function(){
     this.$el.html('<div class="front-page-main"> \
                      <p id="title">WeiqiJS</p> \
+                     <button id="instruction">Instruction</button> \
                      <button id="create-game">Create Game</button> \
                      <button id="join-game">Join Game</button> \
-                     <input id="room-input" type="text"></input> \
+                     <input id="room-input" type="text" placeholder="Enter room name, then press enter..."></input> \
                    </div>')
   },
   createGame: function(){
@@ -31,5 +33,8 @@ var FrontView = Backbone.View.extend({
       this.$el.hide();
       startGame(room);
     }
+  },
+  toggleInstruction: function(){
+    $('#instruction-box').toggle();
   }
 })

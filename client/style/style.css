@@ -81,14 +81,14 @@ div#join-button {
   height: 100vh;
 }
 
-button#create-game, button#join-game {
+button#create-game, button#join-game, button#instruction {
   display: block;
   width: 50%;
   font-size: 5vmin;
   padding: 4vmin;
   margin: 0vmin auto 2vmin auto;
   position: relative;
-  top: 32vh;
+  top: 25vh;
   background-color: rgb(252, 213, 89);
   border: none;
   border-radius: 2vmin;
@@ -99,7 +99,7 @@ button#create-game, button#join-game {
   transition: linear 200ms;
 }
 
-button#create-game:hover, button#join-game:hover {
+button#create-game:hover, button#join-game:hover, button#instruction:hover {
   background-color: rgb(0, 226, 255);
   box-shadow: 0px 0px 3vmin white;
   border: 1vmin solid white;
@@ -172,14 +172,41 @@ img#team-navicon {
 
 input#room-input {
   display: none;
-  width: 20%;
+  width: 50%;
   text-align: center;
   font-size: 3vmin;
   padding: 2vmin;
-  margin: 0vmin auto 2vmin auto;
+  margin: -2vmin auto 2vmin auto;
   position: relative;
   top: 32vh;
   border: none;
   box-shadow: 0px 0px 3vmin black;
   outline: none;
+}
+
+div#instruction-box {
+  height: 45vmin;
+  width: 60vmin;
+  background-color: rgb(255, 252, 204);
+  box-shadow: 0px 0px 18px black;
+  opacity: 1;
+  position: relative;
+  padding: 5vmin;
+  overflow: hidden;
+  text-align: left;
+  font-size: 3vmin;
+  font-family: Permanent Marker;
+  top: -80vh;
+  margin: 0 auto 0 auto;
+  display: none;
+}
+
+span#instruction-toggle {
+  position: relative;
+  display: inline-block;
+  float: right;
+  color: red;
+  top: -3vmin;
+  cursor: pointer;
+  opacity: 0.2;
 }
